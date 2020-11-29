@@ -2,11 +2,12 @@ import React from 'react';
 import axios from 'axios';
 import ListScreen from './components/ListScreen.js';
 import EditScreen from './components/EditScreen.js';
+import { getPeriodosFromCurrentPreviousNextYears } from './helpers/periodsListCreator.js';
 
 const api = axios.create({ baseURL: 'api' });
 
 
-const PERIODS = ['2019-01','2019-02','2019-03','2019-04','2019-05','2019-06','2019-07','2019-08','2019-09','2019-10','2019-11','2019-12'];
+const PERIODS = getPeriodosFromCurrentPreviousNextYears();
 
 const ENTRIES_LIST_SCREEN = 0;
 const ADD_EDIT_SCREEN = 1;
@@ -149,7 +150,8 @@ export default function App() {
 
     return (
         <div className='container'>
-            <h1 className ='center'>Desafio Final do Bootcamp Full-Stack</h1>
+            <h1 className ='center'>Gerenciamento de Receitas e Despesas</h1>
+            <h5 className ='center'>Desafio Final do Bootcamp Full-Stack do IGTI</h5>
 
             {
                 currentScreen === ENTRIES_LIST_SCREEN ?

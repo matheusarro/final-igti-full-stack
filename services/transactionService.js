@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const dateHelper = require('../helpers/dateHelpers.js');
+// const dateHelper = require('../helpers/dateHelpers.js'); --> não possui mais uso
 const ObjectId = mongoose.Types.ObjectId;
 
 // Aqui havia um erro difícil de pegar. Importei como "transactionModel",
@@ -47,8 +47,8 @@ const createEntry = async (request, response) => {
             year: request.body.year,
             month: request.body.month,
             day: request.body.day,
-            yearMonth: dateHelper.yearMonthFormat(request.body.year, request.body.month),
-            yearMonthDay: dateHelper.yearMonthDayFormat(request.body.year, request.body.month, request.body.day),
+            yearMonth: `${request.body.year}-${request.body.month.toString().padStart(2,'0')}`,
+            yearMonthDay: `${request.body.year}-${request.body.month.toString().padStart(2,'0')}-${request.body.day.toString().padStart(2,'0')}`,
             type: request.body.type
         });
 
@@ -80,8 +80,8 @@ const editEntry = async (request, response) => {
             year: request.body.year,
             month: request.body.month,
             day: request.body.day,
-            yearMonth: dateHelper.yearMonthFormat(request.body.year, request.body.month),
-            yearMonthDay: dateHelper.yearMonthDayFormat(request.body.year, request.body.month, request.body.day),
+            yearMonth: `${request.body.year}-${request.body.month.toString().padStart(2,'0')}`,
+            yearMonthDay: `${request.body.year}-${request.body.month.toString().padStart(2,'0')}-${request.body.day.toString().padStart(2,'0')}`,
             type: request.body.type
         };
 
