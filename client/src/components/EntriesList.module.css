@@ -1,0 +1,16 @@
+.EntrieStyle {
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid;
+    border-radius: 5px;
+}
+
+.CategoryStyle {
+    font-weight: bold;
+    margin-left: 15px;
+    margin-right: 25px;
+}
+
+.ButtonStyle {
+    margin: 10px;
+}
