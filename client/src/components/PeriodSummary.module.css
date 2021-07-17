@@ -1,0 +1,13 @@
+.SummaryInfo {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.SummarySpan {
+  font-weight: bold;
+}

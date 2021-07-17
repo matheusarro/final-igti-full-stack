@@ -1,26 +1,42 @@
 import React from 'react';
+import { currencyFormatter } from '../helpers/numbersFormat';
 import styles from './EntriesList.module.css';
 
-const EARN_COLOR = '#00FA9A';
-const EXPE_COLOR = '#F08080';
+const EARN_COLOR = 'green lighten-3';
+const EXPE_COLOR = 'red lighten-3';
 
-export default function EntriesList( { entries, onEditEntrie, onDeleteEntrie } ) {
+export default function EntriesList( { entries, onEditEntry, onDeleteEntry } ) {
 
     return (
         <div>
             {
-                entries.map( (entrie) => {
-                    const bgColor = ( entrie.type === '+' ? EARN_COLOR : EXPE_COLOR);
+                entries.map( (entry) => {
+                    const bgColor = ( entry.type === '+' ? `${EARN_COLOR}` : `${EXPE_COLOR}`);
 
                     return (
-                    <div key={entrie._id} className={styles.EntrieStyle} style={ {backgroundColor: bgColor} }>
-                        <span className={styles.ButtonStyle}>
-                            <button className='waves-effect waves-light btn blue' onClick={onEditEntrie} id={entrie._id}>✎</button>
-                            <button className='waves-effect waves-light btn red darken-4' onClick={onDeleteEntrie} id={entrie._id}>X</button>
-                        </span>
-                        <span>
-                            {entrie.yearMonthDay} <span className={styles.CategoryStyle}>{entrie.category}</span> R$ {entrie.value} <span style={ {fontStyle: 'italic', marginLeft: '25px'} }>{entrie.description}</span>
-                        </span>
+                    <div key={entry._id} className={`card-panel ${bgColor} ${styles.EntryStyle}`}>
+                        <div className={styles.InfoStyle}>
+                            <span className={styles.Date}>{entry.yearMonthDay.substring(8,10)}</span>
+                            <span className={styles.Value}>{currencyFormatter(entry.value, 'BRL')}</span>
+                            <span className={styles.EntryCategoryDescription}>
+                                <span className={styles.Category}>{entry.category}</span>
+                                <span className={styles.Description}>{entry.description}</span>
+                            </span>
+                        </div>
+                        <div className={styles.ActionButtonsDiv}>
+                            <button
+                                className={`waves-effect waves-light btn blue lighten-1 ${styles.Button}`}
+                                onClick={onEditEntry}
+                                id={entry._id}
+                                title={'Editar lançamento'}
+                            >&#x270E;</button>
+                            <button
+                                className={`waves-effect waves-light btn red darken-1 ${styles.Button}`}
+                                onClick={onDeleteEntry}
+                                id={entry._id}
+                                title={'Excluir lançamento'}
+                            > &#x1F5D1; </button>
+                        </div>
                     </div>
                     )
                 })

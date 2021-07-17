@@ -2,7 +2,7 @@
 
 const getPeriodosFromCurrentPreviousNextYears  = () => {
     const today = new Date();
-    console.log(today.toISOString().split('T')[0]); // traz a data no formato ISO, quebrando no caractere T e somente o index 0 do array
+    // console.log(today.toISOString().split('T')[0]); // traz a data no formato ISO, quebrando no caractere T e somente o index 0 do array
 
     let allPeriods = [];
 
@@ -11,10 +11,10 @@ const getPeriodosFromCurrentPreviousNextYears  = () => {
             const period = `${year}-${month.toString().padStart(2,'0')}`;
             allPeriods.push(period);
         }
-        console.log(`Novos periodos adicionados para: ${year}`);
+        // console.log(`Novos periodos adicionados para: ${year}`);
     }
 
     return allPeriods;
-}
+};
 
-module.exports = { getPeriodosFromCurrentPreviousNextYears };
+export default getPeriodosFromCurrentPreviousNextYears;

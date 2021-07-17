@@ -1,0 +1,36 @@
+.ActionButtonsDiv {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.Button {
+  width: 45px;
+  height: 35px;
+  margin-left: 0.25rem
+}
+
+.DateField {
+  width: 8.5rem;
+}
+
+.ValueEntryTypeBlock {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.EntryTypeBlock {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.EntryType {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
