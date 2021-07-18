@@ -1,0 +1,11 @@
+.Selector {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0.25rem;
+  margin-bottom: 1rem;
+  width: 6rem;
+}
+
+.SelectorLabel {
+  font-size: 0.75rem;
+}

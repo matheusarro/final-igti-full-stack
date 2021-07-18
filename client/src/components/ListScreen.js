@@ -1,35 +1,39 @@
 import React from 'react';
-import CreateEntrieButton from './CreateEntrieButton';
+import CreateEntrieButton from './CreateEntryButton';
 import EntriesList from './EntriesList';
 import FilterInput from './FilterInput';
 import PeriodSelector from './PeriodSelector';
+import styles from './ListScreen.module.css';
+import PeriodSummary from './PeriodSummary';
 
-
-export default function ListScreen( { entries, currentPeriod, allPeriods, searchText, onChangePeriod, OnCreateEntrie, onDeleteEntrie, onChangeSearchText, onEditEntrie } ) {
+export default function ListScreen( { entries, currentPeriod, allPeriods, searchText, onChangePeriod, onCreateEntry, onDeleteEntry, onChangeSearchText, onEditEntry } ) {
 
     return (
         <>
-        
             < PeriodSelector
                 allPeriods={allPeriods}
                 currentPeriod={currentPeriod}
-                onChangePeriod={onChangePeriod}
+                onChange={onChangePeriod}
             />
+
+            <PeriodSummary
+                periodEntries={entries}
+            ></PeriodSummary>
             
-            <div>
+            <div className={styles.FilterCreate}>
                 <FilterInput
                     searchText={searchText}
                     onChangeSearchText={onChangeSearchText}
                 />
                 <CreateEntrieButton
-                    OnCreateEntrie={OnCreateEntrie}
+                    onCreateEntry={onCreateEntry}
                 />
             </div>
 
             <EntriesList
                 entries={entries}
-                onEditEntrie={onEditEntrie}
-                onDeleteEntrie={onDeleteEntrie}
+                onEditEntry={onEditEntry}
+                onDeleteEntry={onDeleteEntry}
             />
 
         </>

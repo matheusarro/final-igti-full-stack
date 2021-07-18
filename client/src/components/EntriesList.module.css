@@ -1,16 +1,61 @@
-.EntrieStyle {
-    padding: 5px;
-    margin: 5px;
-    border: 1px solid;
-    border-radius: 5px;
+.EntryStyle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    //padding: 1rem;
+    //margin-top: 0.25rem;
+    //margin-bottom: 0.25rem;
+    //border-radius: 3px;
 }
 
-.CategoryStyle {
+.InfoStyle {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    //justify-content: space-between;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.EntryCategoryDescription {
+    display: flex;
+    flex-direction: column;
+}
+
+.ActionButtonsDiv {
+    display: flex;
+    flex-direction: row;
+    //justify-content: space-between;
+    //margin-left: 1rem;
+}
+
+.Button {
+    width: 45px;
+    height: 35px;
+    margin-left: 0.25rem
+}
+
+.Date {
+    min-width: 10%;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    font-size: 1.5rem;
+}
+
+.Value {
+    min-width: 20%;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+}
+
+.Category {
     font-weight: bold;
-    margin-left: 15px;
-    margin-right: 25px;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
 }
 
-.ButtonStyle {
-    margin: 10px;
+.Description {
+    font-style: italic;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
 }

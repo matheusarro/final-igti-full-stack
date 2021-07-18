@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import styles from './EditScreen.module.css';
 
 const INSERTING = 0;
 const EDITING = 1;
@@ -12,20 +13,20 @@ function today() {
     return today;
 }
 
-export default function EditScreen( { entrie, onSave, onCancel } ) {
-    const [description, setDescription] = React.useState('');
-    const [value, setValue] = React.useState('0');
-    const [category, setCategory] = React.useState('');
-    const [date, setDate] = React.useState(today());
-    const [type, setType] = React.useState('-');
-    const [mode, setMode] = React.useState(INSERTING);
+export default function EditScreen( { entry, onSave, onCancel } ) {
+    const [description, setDescription] = useState('');
+    const [value, setValue] = useState('0');
+    const [category, setCategory] = useState('');
+    const [date, setDate] = useState(today());
+    const [type, setType] = useState('-');
+    const [mode, setMode] = useState(INSERTING);
 
-    React.useEffect( () => {
-        if (!entrie) {
+    useEffect( () => {
+        if (!entry) {
             return;
         }
 
-        const { description, value, category, yearMonthDay, type } = entrie;
+        const { description, value, category, yearMonthDay, type } = entry;
 
         setDescription(description);
         setValue(value);
@@ -33,7 +34,7 @@ export default function EditScreen( { entrie, onSave, onCancel } ) {
         setDate(yearMonthDay);
         setType(type);
         setMode(EDITING);
-    }, [entrie]);
+    }, [entry]);
 
     const handleDescriptionChange = (event) => {
         const newDescription = event.target.value;
@@ -62,8 +63,8 @@ export default function EditScreen( { entrie, onSave, onCancel } ) {
 
 
     const handleSaveButton = () => { // manipula a prop.entrie
-        const editedEntrie = {
-            _id: !!entrie ? entrie._id : null,
+        const editedEntry = {
+            _id: !!entry ? entry._id : null,
             description,
             value,
             category,
@@ -71,27 +72,13 @@ export default function EditScreen( { entrie, onSave, onCancel } ) {
             type
         };
 
-        onSave(editedEntrie);
+        onSave(editedEntry);
     };
 
 
     return (
-        <div>
-            <div>
-                <span>
-                    <label>
-                        <input name='expense_earning' type='radio' value='-' checked={type === '-'} onChange={handleTypeChange} />
-                        <span>Despesa</span>
-                    </label>
-                </span>
-                <span>
-                    <label>
-                        <input name='expense_earning' type='radio' value='+' checked={type === '+'} onChange={handleTypeChange} />
-                        <span>Receita</span>
-                    </label>
-                </span>
-            </div>
-
+        <>
+            {mode === INSERTING ? <h5 className='center'>Inclusão de Lançamento</h5> : <h5 className='center'>Alteração de Lançamento</h5>}
 
             <div className='input-field'>
                 <input type='text' value={description} id='inputDescription' onChange={handleDescriptionChange} />
@@ -99,22 +86,41 @@ export default function EditScreen( { entrie, onSave, onCancel } ) {
             </div>
 
             <div className='input-field'>
-                <input type='number' value={value} id='inputValue' onChange={handleValueChange} />
-                <label htmlFor='inputValue' className='active'>Valor</label>
-            </div>
-
-            <div className='input-field'>
                 <input type='text' value={category} id='inputCategory' onChange={handleCategoryChange} />
                 <label htmlFor='inputCategory' className='active'>Categoria</label>
             </div>
 
-            <div className='input-field'>
-                <input type='date' value={date} id='inputDate' onChange={handleDateChange} />
-                <label htmlFor='inputDate' className='active'>Data</label>
+            <div className={styles.ValueEntryTypeBlock}>
+                <div className='input-field'>
+                    <input type='number' value={value} id='inputValue' min='0' onChange={handleValueChange} />
+                    <label htmlFor='inputValue' className='active'>Valor</label>
+                </div>
+
+                <div className={styles.EntryTypeBlock}>
+                    <span className={styles.EntryType}>
+                        <label>
+                            <input name='expense_earning' type='radio' value='-' checked={type === '-'} onChange={handleTypeChange} />
+                            <span>Despesa</span>
+                        </label>
+                    </span>
+                    <span className={styles.EntryType}>
+                        <label>
+                            <input name='expense_earning' type='radio' value='+' checked={type === '+'} onChange={handleTypeChange} />
+                            <span>Receita</span>
+                        </label>
+                    </span>
+                </div>
+
+                <div className={`input-field ${styles.DateField}`}>
+                    <input type='date' value={date} id='inputDate' onChange={handleDateChange} />
+                    <label htmlFor='inputDate' className='active'>Data</label>
+                </div>
             </div>
 
-            <button className='waves-effect waves-light btn' onClick={handleSaveButton}>🖪</button>
-            <button className='waves-effect waves-light btn red darken-4' onClick={onCancel}>X</button>
-        </div>
+            <div className={styles.ActionButtonsDiv}>
+                <button className={`waves-effect waves-light btn green darken-1 ${styles.Button}`} title={'Salvar lançamento'} onClick={handleSaveButton}>&#x2713;</button>
+                <button className={`waves-effect waves-light btn red darken-1 ${styles.Button}`} title={'Cancelar operação e retornar'} onClick={onCancel}>&#x21BA;</button>
+            </div>
+        </>
     )
 }

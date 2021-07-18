@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import ListScreen from './components/ListScreen.js';
 import EditScreen from './components/EditScreen.js';
-import { getPeriodosFromCurrentPreviousNextYears } from './helpers/periodsListCreator.js';
+import getPeriodosFromCurrentPreviousNextYears from './helpers/periodsListCreator.js';
+import getCurrentPeriod from './helpers/getCurrentPeriod.js';
+import styles from './App.module.css';
 
 const api = axios.create({ baseURL: 'api' });
 
@@ -14,19 +16,26 @@ const ADD_EDIT_SCREEN = 1;
 
 
 export default function App() {
-    const [allEntries, setAllEntries] = React.useState([]);
-    const [filteredEntries, setFilteredEntries] = React.useState([]);
-    const [currentPeriod, setCurrentPeriod] = React.useState(PERIODS[0]);
-    const [currentScreen, setCurrentScreen] = React.useState(ENTRIES_LIST_SCREEN);
-    const [searchText, setSearchText] = React.useState('');
-    const [selectedEntrie, setSelectedEntrie] = React.useState(null); // sem especificar NULL, inicia na tela de edição
-    const [newEntrie, setNewEntrie] = React.useState(false);
+    const [allEntries, setAllEntries] = useState([]);
+    const [filteredEntries, setFilteredEntries] = useState([]);
+    const [currentPeriod, setCurrentPeriod] = useState(undefined);
+    const [currentScreen, setCurrentScreen] = useState(ENTRIES_LIST_SCREEN);
+    const [searchText, setSearchText] = useState('');
+    const [selectedEntry, setSelectedEntry] = useState(null); // sem especificar NULL, inicia na tela de edição
+    const [newEntry, setNewEntry] = useState(false);
 
+    useEffect(() => {
+        const period = getCurrentPeriod();
 
-    React.useEffect( () => {
+        setCurrentPeriod(period);
+    }, []);
+
+    useEffect( () => {
         const fetchEntries = async () => {
             const axiosObj = await api.get(`/transaction/${currentPeriod}`);
             const entriesData = axiosObj.data;
+
+            entriesData.sort((a,b) => a.yearMonthDay.localeCompare(b.yearMonthDay));
 
             setAllEntries(entriesData);
             setFilteredEntries(entriesData);
@@ -35,12 +44,12 @@ export default function App() {
     }, [currentPeriod]);
 
 
-    React.useEffect( () => {
+    useEffect( () => {
         let newFilteredEntries = [...allEntries];
 
         if (searchText.trim()) {
-            newFilteredEntries = newFilteredEntries.filter( entrie => {
-                return entrie.description.toLowerCase().includes(searchText.toLowerCase());
+            newFilteredEntries = newFilteredEntries.filter( entry => {
+                return entry.description.toLowerCase().includes(searchText.toLowerCase());
             });
         }
 
@@ -48,10 +57,10 @@ export default function App() {
     }, [allEntries, searchText]);
 
 
-    React.useEffect( () => {
-        const newScreen = (selectedEntrie !== null || newEntrie) ? ADD_EDIT_SCREEN : ENTRIES_LIST_SCREEN;
+    useEffect( () => {
+        const newScreen = (selectedEntry !== null || newEntry) ? ADD_EDIT_SCREEN : ENTRIES_LIST_SCREEN;
         setCurrentScreen(newScreen);
-    }, [selectedEntrie, newEntrie]);
+    }, [selectedEntry, newEntry]);
 
 
     const handlePeriodChange = (event) => {
@@ -60,31 +69,31 @@ export default function App() {
     };
 
 
-    const handleDeleteEntrie = async (event) => {
-        const entrieId = event.target.id;
+    const handleDeleteEntry = async (event) => {
+        const entryId = event.target.id;
 
         const body = {
-            _id: entrieId
+            _id: entryId
         };
 
         await api.delete(`/transaction`, {data: body}); // delete precisa do {data: body}
         
-        const currentEntries = filteredEntries.filter( (entrie) => {
-            return (entrie._id !== entrieId);
+        const currentEntries = filteredEntries.filter( (entry) => {
+            return (entry._id !== entryId);
         });
 
         setAllEntries(currentEntries);
     };
 
 
-    const handleEntrieEdit = async (event) => {
-        const entrieId = event.target.id;
+    const handleEntryEdit = async (event) => {
+        const entryId = event.target.id;
 
-        const newSelectedEntrie = filteredEntries.find( entrie => {
-            return entrie._id === entrieId;
+        const newSelectedEntry = filteredEntries.find( entry => {
+            return entry._id === entryId;
         });
 
-        setSelectedEntrie(newSelectedEntrie);
+        setSelectedEntry(newSelectedEntry);
     };
 
 
@@ -94,86 +103,95 @@ export default function App() {
     };
 
 
-    const handleCreateEntrie = () => {
-        setNewEntrie(true);
+    const handleCreateEntry = () => {
+        setNewEntry(true);
     };
 
 
-    const handleEditSave = async (editedEntrie) => {
+    const handleEditSave = async (editedEntry) => {
         const upToDateEntries = [...allEntries];
 
-        if (!editedEntrie._id) {
+        if (!editedEntry._id) {
             const body = {
-                description: editedEntrie.description,
-                value: editedEntrie.value,
-                category: editedEntrie.category,
-                type: editedEntrie.type,
-                year: Number(editedEntrie.yearMonthDay.substring(0,4)),
-                month: Number(editedEntrie.yearMonthDay.substring(5,7)),
-                day: Number(editedEntrie.yearMonthDay.substring(8,10))
+                description: editedEntry.description,
+                value: editedEntry.value,
+                category: editedEntry.category,
+                type: editedEntry.type,
+                year: Number(editedEntry.yearMonthDay.substring(0,4)),
+                month: Number(editedEntry.yearMonthDay.substring(5,7)),
+                day: Number(editedEntry.yearMonthDay.substring(8,10))
             };
 
-            const insertedEntrie = await api.post(`/transaction`, body); // post não precisa do {data: body}
-            upToDateEntries.push(insertedEntrie.data);
+            const insertedEntry = await api.post(`/transaction`, body); // post não precisa do {data: body}
+            upToDateEntries.push(insertedEntry.data);
         } else {
             const body = {
-                _id: editedEntrie._id,
-                description: editedEntrie.description,
-                value: editedEntrie.value,
-                category: editedEntrie.category,
-                type: editedEntrie.type,
-                year: Number(editedEntrie.yearMonthDay.substring(0,4)),
-                month: Number(editedEntrie.yearMonthDay.substring(5,7)),
-                day: Number(editedEntrie.yearMonthDay.substring(8,10))
+                _id: editedEntry._id,
+                description: editedEntry.description,
+                value: editedEntry.value,
+                category: editedEntry.category,
+                type: editedEntry.type,
+                year: Number(editedEntry.yearMonthDay.substring(0,4)),
+                month: Number(editedEntry.yearMonthDay.substring(5,7)),
+                day: Number(editedEntry.yearMonthDay.substring(8,10))
             };
             
             await api.put(`/transaction`, body); // put não precisa do {data: body}
     
-            const index = upToDateEntries.findIndex(entrie => {
-                return entrie._id === editedEntrie._id;
+            const index = upToDateEntries.findIndex(entry => {
+                return entry._id === editedEntry._id;
             });
     
-            upToDateEntries[index] = editedEntrie;
+            upToDateEntries[index] = editedEntry;
         }
 
         setAllEntries(upToDateEntries);
-        setSelectedEntrie(null);
-        setNewEntrie(false);
+        setSelectedEntry(null);
+        setNewEntry(false);
     };
 
 
     const handleEditCancel = () => {
-        setNewEntrie(false);
-        setSelectedEntrie(null);
+        setNewEntry(false);
+        setSelectedEntry(null);
     };
 
 
     return (
-        <div className='container'>
-            <h1 className ='center'>Gerenciamento de Receitas e Despesas</h1>
-            <h5 className ='center'>Desafio Final do Bootcamp Full-Stack do IGTI</h5>
+        <>
+            <header className={`center flow-text ${styles.Header}`}>
+                <h1>Gerenciamento de Receitas e Despesas</h1>
+            </header>
 
-            {
-                currentScreen === ENTRIES_LIST_SCREEN ?
-                    <ListScreen
-                        entries={filteredEntries}
-                        allPeriods={PERIODS}
-                        currentPeriod={currentPeriod}
-                        searchText={searchText}
-                        onChangePeriod={handlePeriodChange}
-                        OnCreateEntrie={handleCreateEntrie}
-                        onEditEntrie={handleEntrieEdit}
-                        onDeleteEntrie={handleDeleteEntrie}
-                        onChangeSearchText={handleSearchTextChange}
-                    />
+            <main>
+                <div className='container'>
+                    {
+                        currentScreen === ENTRIES_LIST_SCREEN
+                            ? <ListScreen
+                                entries={filteredEntries}
+                                allPeriods={PERIODS}
+                                currentPeriod={currentPeriod}
+                                searchText={searchText}
+                                onChangePeriod={handlePeriodChange}
+                                onCreateEntry={handleCreateEntry}
+                                onEditEntry={handleEntryEdit}
+                                onDeleteEntry={handleDeleteEntry}
+                                onChangeSearchText={handleSearchTextChange}
+                            />
 
-                    : <EditScreen
-                        entrie={selectedEntrie}
-                        onSave={handleEditSave}
-                        onCancel={handleEditCancel}
-                    />
-            }
+                            : <EditScreen
+                                entry={selectedEntry}
+                                onSave={handleEditSave}
+                                onCancel={handleEditCancel}
+                            />
+                    }
 
-        </div>
+                </div>
+            </main>
+            <footer className ={`center ${styles.Footer}`}>
+                <h6>Desafio Final do Bootcamp Full-Stack do IGTI</h6>
+                <span>Segunda Turma de 2020</span>
+            </footer>
+        </>
     );
 }
